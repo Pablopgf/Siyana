@@ -259,12 +259,19 @@ export const Game: React.FC = () => {
 
   return (
     <div 
-      className="relative w-full h-full bg-sky-400 cursor-pointer overflow-hidden select-none"
+      className="relative w-full h-full cursor-pointer overflow-hidden select-none"
       onClick={handleFlap}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ touchAction: 'none' }}
     >
+      {/* Background image */}
+      <img 
+        src="/images/background.png" 
+        alt="background" 
+        className="absolute inset-0 w-full h-full object-cover z-0" 
+        draggable={false}
+      />
       {/* Score */}
       <Score score={gameState.score} />
 

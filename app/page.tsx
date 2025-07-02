@@ -4,12 +4,12 @@ import type { Metadata } from 'next'
 
 const frame = {
   version: 'next',
-  imageUrl: `${APP_URL}/images/feed.png`,
+  imageUrl: `${APP_URL}/images/background.png`,
   button: {
     title: 'Launch Template',
     action: {
       type: 'launch_frame',
-      name: 'Monad Farcaster MiniApp Template',
+      name: 'Siyana Studio Mini App',
       url: APP_URL,
       splashImageUrl: `${APP_URL}/images/splash.png`,
       splashBackgroundColor: '#f7f7f7',
@@ -19,9 +19,9 @@ const frame = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Monad Farcaster MiniApp Template',
+    title: 'Siyana Studio Mini App',
     openGraph: {
-      title: 'Monad Farcaster MiniApp Template',
+      title: 'Siyana Studio Mini App',
       description: 'A template for building mini-apps on Farcaster and Monad',
     },
     other: {

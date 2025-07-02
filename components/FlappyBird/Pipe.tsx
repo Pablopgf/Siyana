@@ -17,13 +17,16 @@ export const Pipe: React.FC<PipeProps> = ({ x, y, width, height, isTop }) => {
         top: y,
         width,
         height,
-        transform: isTop ? 'rotate(180deg)' : 'rotate(0deg)',
       }}
     >
       {/* Pipe body */}
       <div 
         className="bg-green-600 border-3 border-green-800"
-        style={{ width, height }}
+        style={{
+          width,
+          height,
+          transform: isTop ? 'scaleY(-1)' : 'none',
+        }}
       />
       
       {/* Pipe cap */}
