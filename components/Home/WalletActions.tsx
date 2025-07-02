@@ -20,14 +20,14 @@ export function WalletActions() {
 
   async function sendTransactionHandler() {
     sendTransaction({
-      to: '0x7f748f154B6D180D35fA12460C7E4C631e28A9d7',
-      value: parseEther('1'),
+      to: '0xBbf814B2bcE970e6720EF8CB8c19bA7D902319ce',
+      value: parseEther('0.000777')
     })
   }
 
   if (isConnected) {
     return (
-      <div className="space-y-4 border border-[#333] rounded-md p-4">
+      <div className="space-y-4 border border-[#333] rounded-md p-4 pb-20">
         <h2 className="text-xl font-bold text-left">sdk.wallet.ethProvider</h2>
         <div className="flex flex-row space-x-4 justify-start items-start">
           <div className="flex flex-col space-y-4 justify-start">

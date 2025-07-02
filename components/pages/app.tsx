@@ -3,9 +3,18 @@
 import { Demo } from '@/components/Home'
 import { useFrame } from '@/components/farcaster-provider'
 import { SafeAreaContainer } from '@/components/safe-area-container'
+import { useEffect } from 'react'
+import { useMiniKit } from '@coinbase/onchainkit/minikit'
 
 export default function Home() {
   const { context, isLoading, isSDKLoaded } = useFrame()
+  const { setFrameReady, isFrameReady } = useMiniKit()
+
+  useEffect(() => {
+    if (!isFrameReady) {
+      setFrameReady()
+    }
+  }, [setFrameReady, isFrameReady])
 
   if (isLoading) {
     return (
