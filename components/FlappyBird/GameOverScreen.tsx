@@ -7,7 +7,7 @@ interface GameOverScreenProps {
 
 export const GameOverScreen: React.FC<GameOverScreenProps> = ({ score, onRestart }) => {
   return (
-    <div className="flex-1 bg-sky-400 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 flex flex-col justify-center items-center bg-sky-400">
       <div className="text-center p-5">
         <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-5">
           Game Over
