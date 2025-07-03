@@ -39,6 +39,7 @@ const PIPE_WIDTH = 60
 const PIPE_GAP = 200
 const PIPE_SPEED = 2.0
 const BIRD_SIZE = 30
+const BASE_HEIGHT = 60; // Altura en píxeles de la base (ajusta según la imagen)
 
 export const Game: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -69,8 +70,8 @@ export const Game: React.FC = () => {
       const newBirdVelocity = prev.birdVelocity + GRAVITY
       const newBirdY = prev.birdY + newBirdVelocity
 
-      // Check if bird hits ground or ceiling
-      if (newBirdY <= 0 || newBirdY + BIRD_SIZE >= SCREEN_HEIGHT) {
+      // Check if bird hits ground (base) or ceiling
+      if (newBirdY <= 0 || newBirdY + BIRD_SIZE >= SCREEN_HEIGHT - BASE_HEIGHT) {
         return { ...prev, isGameOver: true }
       }
 
@@ -88,7 +89,7 @@ export const Game: React.FC = () => {
       const distanceThreshold = isFirstPipe ? 500 : 250
       
       if (isFirstPipe || newPipes[newPipes.length - 1].x < SCREEN_WIDTH - distanceThreshold) {
-        const topHeight = Math.random() * (SCREEN_HEIGHT - PIPE_GAP - 80) + 40
+        const topHeight = Math.random() * (SCREEN_HEIGHT - PIPE_GAP - 80 - BASE_HEIGHT) + 40
         const bottomY = topHeight + PIPE_GAP
         newPipes.push({
           id: pipeIdCounter.current++,
@@ -300,11 +301,20 @@ export const Game: React.FC = () => {
             x={pipe.x}
             y={pipe.bottomY}
             width={PIPE_WIDTH}
-            height={SCREEN_HEIGHT - pipe.bottomY}
+            height={SCREEN_HEIGHT - BASE_HEIGHT - pipe.bottomY}
             isTop={false}
           />
         </React.Fragment>
       ))}
+
+      {/* Base (suelo) */}
+      <img
+        src="/images/base.png"
+        alt="base"
+        className="absolute left-0 w-full z-20"
+        style={{ bottom: 0, height: BASE_HEIGHT, pointerEvents: 'none' }}
+        draggable={false}
+      />
     </div>
   )
 } 

@@ -6,7 +6,7 @@ const frame = {
   version: 'next',
   imageUrl: `${APP_URL}/images/background.png`,
   button: {
-    title: 'Launch Template',
+    title: 'Siyana Studio Mini App',
     action: {
       type: 'launch_frame',
       name: 'Siyana Studio Mini App',
