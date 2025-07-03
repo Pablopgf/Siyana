@@ -1,12 +1,24 @@
 import React from 'react'
+import { AiOutlineArrowLeft } from 'react-icons/ai'
 
 interface StartScreenProps {
   onStart: () => void
+  onBack?: () => void
 }
 
-export const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
+export const StartScreen: React.FC<StartScreenProps> = ({ onStart, onBack }) => {
   return (
-    <div className="flex-1 bg-sky-400 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 flex flex-col justify-center items-center bg-sky-400">
+      {/* Botón volver (flecha) */}
+      {onBack && (
+        <button
+          className="absolute top-4 left-4 text-white text-3xl bg-black/40 rounded-full p-2 z-50"
+          onClick={onBack}
+          aria-label="Volver"
+        >
+          <AiOutlineArrowLeft />
+        </button>
+      )}
       <div className="text-center p-5">
         <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-5">
           Flappy Bird

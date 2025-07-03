@@ -41,7 +41,7 @@ const PIPE_SPEED = 2.0
 const BIRD_SIZE = 30
 const BASE_HEIGHT = 60; // Altura en píxeles de la base (ajusta según la imagen)
 
-export const Game: React.FC = () => {
+export const Game: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const [gameState, setGameState] = useState<GameState>({
     isPlaying: false,
     isGameOver: false,
@@ -250,7 +250,7 @@ export const Game: React.FC = () => {
 
   // Show start screen
   if (!gameState.isPlaying && !gameState.isGameOver) {
-    return <StartScreen onStart={handleFlap} />
+    return <StartScreen onStart={handleFlap} onBack={onBack} />
   }
 
   // Show game over screen

@@ -63,7 +63,7 @@ export function Demo() {
         </div>
       </header>
       <div className="pt-20 w-full max-w-4xl space-y-6">
-        {/* {showUser && <User />} */}
+        <User />
         <FarcasterActions />
         <WalletActions />
       </div>
@@ -72,10 +72,9 @@ export function Demo() {
           <AiOutlineHome className="text-white w-5 h-5" />
           <span className="text-white text-sm">Home</span>
         </div>
-        <button className="text-sm text-white">Profile</button>
         <button 
           onClick={() => setShowFlappyBird(true)}
-          className="text-sm text-white bg-blue-600 px-3 py-1 rounded"
+          className="text-sm text-white"
         >
           🐦 Flappy Bird
         </button>
