@@ -102,22 +102,16 @@ export default function HomeShop() {
           )}
         </div>
       </div>
-      {/* Barra verde bienvenida */}
-      <div className="bg-green-200 text-green-900 px-4 py-2 flex items-center space-x-2">
-        <span className="text-lg">👾</span>
-        <span className="font-medium">Hey, Pablete - welcome to Minted Merch! <span className="wave">👋</span></span>
-      </div>
-      {/* Título y subtítulo */}
-      <div className="px-4 pt-6 pb-2">
-        <div className="bg-white rounded-2xl shadow p-6 relative">
+      <div className="pb-2">
+        <div className="bg-white shadow p-6 relative">
           <h2 className="text-2xl font-bold">All Products</h2>
           <p className="text-gray-500 text-sm">Pay with USDC on Base</p>
           <button
-            className="absolute top-6 right-6 bg-green-100 hover:bg-green-200 p-3 rounded-xl transition"
+            className="absolute top-6 right-6 bg-[#1652f0] hover:bg-blue-700 p-3 rounded-xl transition"
             onClick={() => setShowCart(true)}
             aria-label="Shopping Cart"
           >
-            <FaShoppingBag className="text-green-700" size={22} />
+            <FaShoppingBag className="text-white" size={22} />
           </button>
         </div>
       </div>
