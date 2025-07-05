@@ -62,31 +62,27 @@ export default function HomeShop() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
-      {/* Header */}
-      <div className="bg-[#1652f0] text-white px-4 py-3 flex items-center justify-between relative">
-        {/* Izquierda vacía para centrar el logo */}
-        <div className="w-10"></div>
-        {/* Logo centrado */}
-        <img
-          src="/images/icon.png"
-          alt="Logo"
-          className="w-10 h-10 object-contain mx-auto"
-        />
-        {/* Usuario Farcaster a la derecha */}
-        {context?.user ? (
-          <div className="flex items-center space-x-2">
-            {context.user.pfpUrl && (
-              <img
-                src={context.user.pfpUrl}
-                alt="User Profile"
-                className="w-9 h-9 rounded-full border-2 border-white"
-              />
-            )}
-            <span className="font-semibold text-white text-base truncate max-w-[100px]">@{context.user.username}</span>
-          </div>
-        ) : (
-          <div className="w-24 h-9" />
-        )}
+      <div className="bg-[#1652f0] text-white px-4 py-3 grid grid-cols-3 items-center">
+        <div></div>
+        <div className="flex justify-center">
+          <img
+            src="/images/icon.png"
+            alt="Logo"
+            className="w-10 h-10 object-contain"
+          />
+        </div>
+        <div className="flex justify-end items-center space-x-2">
+          {context?.user?.pfpUrl && (
+            <img
+              src={context.user.pfpUrl}
+              alt="User Profile"
+              className="w-9 h-9 rounded-full border-2 border-white"
+            />
+          )}
+          {context?.user?.username && (
+            <span className="font-semibold text-white text-base truncate max-w-[100px]">{context.user.username}</span>
+          )}
+        </div>
       </div>
       {/* Barra verde bienvenida */}
       <div className="bg-green-200 text-green-900 px-4 py-2 flex items-center space-x-2">
