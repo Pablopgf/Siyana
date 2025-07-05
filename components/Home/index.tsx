@@ -36,6 +36,7 @@ const products = [
 export default function HomeShop() {
   const { context } = useFrame()
   const [showFlappyBird, setShowFlappyBird] = useState(false)
+  const [showCart, setShowCart] = useState(false);
   // const [showUser, setShowUser] = useState(false)
 
   // MiniKit: notificar que el frame está listo
@@ -58,6 +59,23 @@ export default function HomeShop() {
         </button>
       </div>
     )
+  }
+
+  if (showCart) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow p-8 flex flex-col items-center">
+          <div className="text-2xl font-bold mb-2">Shopping Cart (0)</div>
+          <div className="text-gray-500 mb-8 text-center">Your cart is empty<br/>Add some items to get started!</div>
+          <button
+            className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
+            onClick={() => setShowCart(false)}
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -91,8 +109,17 @@ export default function HomeShop() {
       </div>
       {/* Título y subtítulo */}
       <div className="px-4 pt-6 pb-2">
-        <h2 className="text-2xl font-bold">All Products</h2>
-        <p className="text-gray-500 text-sm">Pay with USDC on Base</p>
+        <div className="bg-white rounded-2xl shadow p-6 relative">
+          <h2 className="text-2xl font-bold">All Products</h2>
+          <p className="text-gray-500 text-sm">Pay with USDC on Base</p>
+          <button
+            className="absolute top-6 right-6 bg-green-100 hover:bg-green-200 p-3 rounded-xl transition"
+            onClick={() => setShowCart(true)}
+            aria-label="Shopping Cart"
+          >
+            <FaShoppingBag className="text-green-700" size={22} />
+          </button>
+        </div>
       </div>
       {/* Grid de productos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 px-4">
