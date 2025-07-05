@@ -63,14 +63,30 @@ export default function HomeShop() {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header */}
-      <div className="bg-black text-white px-4 py-3 flex flex-col items-center relative">
-        <span className="text-xs opacity-70">Minted Merch Shop</span>
-        <span className="font-bold text-lg">by svvvg3.eth <span className="text-blue-400">✔️</span></span>
-        {/* Iconos */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex space-x-3">
-          <button className="bg-white/10 p-2 rounded-full"><FaRegClipboard size={20} /></button>
-          <button className="bg-white/10 p-2 rounded-full"><FaShoppingBag size={20} /></button>
-        </div>
+      <div className="bg-[#1652f0] text-white px-4 py-3 flex items-center justify-between relative">
+        {/* Izquierda vacía para centrar el logo */}
+        <div className="w-10"></div>
+        {/* Logo centrado */}
+        <img
+          src="/images/icon.png"
+          alt="Logo"
+          className="w-10 h-10 object-contain mx-auto"
+        />
+        {/* Usuario Farcaster a la derecha */}
+        {context?.user ? (
+          <div className="flex items-center space-x-2">
+            {context.user.pfpUrl && (
+              <img
+                src={context.user.pfpUrl}
+                alt="User Profile"
+                className="w-9 h-9 rounded-full border-2 border-white"
+              />
+            )}
+            <span className="font-semibold text-white text-base truncate max-w-[100px]">@{context.user.username}</span>
+          </div>
+        ) : (
+          <div className="w-24 h-9" />
+        )}
       </div>
       {/* Barra verde bienvenida */}
       <div className="bg-green-200 text-green-900 px-4 py-2 flex items-center space-x-2">
