@@ -63,7 +63,6 @@ export default function HomeShop() {
   const { data: balanceData } = useBalance({
     address: account.address,
     chainId: 8453,
-    watch: true,
   });
 
   if (showFlappyBird) {
