@@ -1,7 +1,7 @@
 import { useFrame } from '@/components/farcaster-provider'
 import { farcasterFrame } from '@farcaster/frame-wagmi-connector'
 import { parseEther } from 'viem'
-import { monadTestnet } from 'viem/chains'
+import { monadTestnet, base } from 'viem/chains'
 import {
   useAccount,
   useConnect,
@@ -43,7 +43,16 @@ export function WalletActions() {
                 {chainId}
               </span>
             </p>
-            {chainId === monadTestnet.id ? (
+            {chainId === base.id ? (
+              <div className="flex flex-col space-y-2 border border-[#333] p-4 rounded-md">
+                <h2 className="text-lg font-semibold text-left">
+                  Connected to Base Network
+                </h2>
+                <p className="text-sm text-left">
+                  You can now view your SYYN balance!
+                </p>
+              </div>
+            ) : chainId === monadTestnet.id ? (
               <div className="flex flex-col space-y-2 border border-[#333] p-4 rounded-md">
                 <h2 className="text-lg font-semibold text-left">
                   Send Transaction Example
@@ -71,13 +80,22 @@ export function WalletActions() {
                 )}
               </div>
             ) : (
-              <button
-                type="button"
-                className="bg-white text-black rounded-md p-2 text-sm"
-                onClick={() => switchChain({ chainId: monadTestnet.id })}
-              >
-                Switch to Monad Testnet
-              </button>
+              <div className="flex flex-col space-y-2">
+                <button
+                  type="button"
+                  className="bg-white text-black rounded-md p-2 text-sm"
+                  onClick={() => switchChain({ chainId: base.id })}
+                >
+                  Switch to Base Network
+                </button>
+                <button
+                  type="button"
+                  className="bg-white text-black rounded-md p-2 text-sm"
+                  onClick={() => switchChain({ chainId: monadTestnet.id })}
+                >
+                  Switch to Monad Testnet
+                </button>
+              </div>
             )}
 
             <button

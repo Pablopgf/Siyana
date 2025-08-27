@@ -4,15 +4,15 @@ import type { Metadata } from 'next'
 
 const frame = {
   version: 'next',
-  imageUrl: `${APP_URL}/images/background.png`,
+  imageUrl: `${APP_URL}/images/feed.jpg`,
   button: {
     title: 'Siyana Studio Mini App',
     action: {
       type: 'launch_frame',
       name: 'Siyana Studio Mini App',
       url: APP_URL,
-      splashImageUrl: `${APP_URL}/images/splash.png`,
-      splashBackgroundColor: '#f7f7f7',
+      splashImageUrl: `${APP_URL}/images/siyana.png`,
+      splashBackgroundColor: '#000000',
     },
   },
 }

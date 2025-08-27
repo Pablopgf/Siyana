@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaRegBookmark, FaBookmark, FaShoppingBag } from 'react-icons/fa';
 
 interface Product {
   name: string;
@@ -9,50 +10,97 @@ interface Product {
   description?: string;
 }
 
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
 interface Props {
   product: Product;
   onClose: () => void;
+  favorites: boolean[];
+  setFavorites: (favorites: boolean[]) => void;
+  products: Product[];
+  cart: CartItem[];
+  setCart: (cart: CartItem[]) => void;
+  onOpenCart: () => void;
 }
 
-export const ProductDetailModal: React.FC<Props> = ({ product, onClose }) => {
+export const ProductDetailModal: React.FC<Props> = ({ product, onClose, favorites, setFavorites, products, cart, setCart, onOpenCart }) => {
   const images = product.images || [product.image];
   const [mainImage, setMainImage] = useState(images[0]);
 
+  const productIndex = products.findIndex(p => p.name === product.name);
+
   return (
-    <div className="fixed inset-0 bg-white z-50 flex flex-col min-h-screen pt-12">
-      <div className="bg-white shadow p-4 relative flex items-center">
-        <button onClick={onClose} className="mr-3 text-2xl font-bold">&larr;</button>
-        <span className="text-lg font-semibold">{product.name}</span>
-      </div>
-      <div className="flex flex-col items-center bg-white pt-4 pb-2">
-        <img src={mainImage} alt={product.name} className="w-64 h-64 object-contain rounded-xl mb-2 border" />
-        <div className="flex space-x-2 mb-2">
-          {images.map((img, idx) => (
-            <img
-              key={idx}
-              src={img}
-              alt={product.name + ' thumb'}
-              className={`w-12 h-12 object-contain rounded border cursor-pointer ${mainImage === img ? 'border-green-600' : 'border-gray-200'}`}
-              onClick={() => setMainImage(img)}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-col items-center bg-white px-4 pb-10">
-        <div className="flex items-center space-x-2 mt-2 mb-1">
-          {product.oldPrice && (
-            <span className="text-gray-400 line-through text-lg">{product.oldPrice}</span>
-          )}
-          <span className="text-green-600 text-2xl font-bold">{product.price}</span>
-        </div>
-        <span className="text-lg font-semibold mb-2">{product.name}</span>
-        {product.description && <p className="mb-4 text-gray-700 text-center">{product.description}</p>}
-      </div>
-      <div className="w-full bg-white p-4 border-t flex justify-center z-50">
-        <button className="w-full max-w-md bg-[#1652f0] hover:bg-blue-700 text-white font-semibold py-3 transition">
-          ADD TO CART
+    <>
+      <div className="fixed top-0 left-0 w-full bg-white p-4 flex items-center justify-between z-50">
+        <button onClick={onClose} className="mr-3 text-2xl">×</button>
+        <button 
+          onClick={() => {
+            onClose();
+            onOpenCart();
+          }}
+          className="flex items-center justify-center w-6 h-6"
+        >
+          <FaShoppingBag className="text-black w-5 h-5" />
         </button>
       </div>
-    </div>
+      <div className="fixed inset-0 z-40 flex flex-col overflow-y-auto pt-16">
+        <div className="flex flex-col items-center bg-white pb-2 px-4">
+          <div
+            className="w-full flex items-center justify-center bg-gray-100 relative"
+            style={{ minHeight: '592px' }}
+          >
+            <img
+              src={mainImage}
+              alt={product.name}
+              className="w-full h-112 object-contain"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col items-center bg-white px-4 pb-10 mb-20">
+          {product.description && <p className="mb-4 text-gray-700 text-center text-xs">{product.description}</p>}
+        </div>
+        <div className="fixed bottom-0 left-0 w-full bg-white p-4 flex flex-col items-center">
+          <div className="flex flex-col w-full">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-black">{product.name}</span>
+              <button
+                className=""
+                onClick={() => {
+                  const updated = [...favorites];
+                  updated[productIndex] = !updated[productIndex];
+                  setFavorites(updated);
+                }}
+                aria-label="Favorite"
+              >
+                {favorites[productIndex] ? (
+                  <FaBookmark className="text-black" />
+                ) : (
+                  <FaRegBookmark className="text-black/30" />
+                )}
+              </button>
+            </div>
+            <span className="text-xs text-black mb-4">{product.price}</span>
+            <button 
+              className="w-full bg-white text-black border border-black py-2 text-xs"
+              onClick={() => {
+                const updatedCart = [...cart];
+                const idx = updatedCart.findIndex((item: CartItem) => item.product.name === product.name);
+                if (idx !== -1) {
+                  updatedCart[idx] = { ...updatedCart[idx], quantity: updatedCart[idx].quantity + 1 };
+                } else {
+                  updatedCart.push({ product, quantity: 1 });
+                }
+                setCart(updatedCart);
+              }}
+            >
+              ADD
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }; 
