@@ -24,7 +24,6 @@ export const BalanceModal: React.FC<BalanceModalProps> = ({ isOpen, onClose }) =
     chainId: 8453,
   });
 
-  // Fetch prices from CoinGecko
   useEffect(() => {
     const fetchPrices = async () => {
       setIsLoadingPrices(true);

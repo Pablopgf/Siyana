@@ -6,10 +6,10 @@ const frame = {
   version: 'next',
   imageUrl: `${APP_URL}/images/feed.jpg`,
   button: {
-    title: 'Siyana Studio Mini App',
+    title: 'Siyana',
     action: {
       type: 'launch_frame',
-      name: 'Siyana Studio Mini App',
+      name: 'Siyana',
       url: APP_URL,
       splashImageUrl: `${APP_URL}/images/siyana.png`,
       splashBackgroundColor: '#000000',
@@ -19,9 +19,9 @@ const frame = {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Siyana Studio Mini App',
+    title: 'Siyana',
     openGraph: {
-      title: 'Siyana Studio Mini App',
+      title: 'Siyana',
       description: 'A template for building mini-apps on Farcaster and Monad',
     },
     other: {

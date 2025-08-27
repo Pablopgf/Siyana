@@ -34,7 +34,7 @@ export const ProductDetailModal: React.FC<Props> = ({ product, onClose, favorite
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full bg-white p-4 flex items-center justify-between z-50">
+      <div className="fixed top-10 left-0 w-full bg-white p-4 flex items-center justify-between z-50">
         <button onClick={onClose} className="mr-3 text-2xl">×</button>
         <button 
           onClick={() => {

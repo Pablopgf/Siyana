@@ -7,7 +7,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Siyana Studio Mini App',
+  title: 'Siyana',
   description: 'A template for building mini-apps on Farcaster and Monad',
 }
 

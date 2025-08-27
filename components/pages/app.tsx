@@ -35,7 +35,7 @@ export default function Home() {
     if (account.address && !isLoadingNative && !isLoadingSyyn && (nativeBalance || syynBalance)) {
       const timer = setTimeout(() => {
         setBalancesLoaded(true);
-      }, 1000);
+      }, 3000);
       
       return () => clearTimeout(timer);
     } else if (!account.address) {
@@ -46,13 +46,12 @@ export default function Home() {
   if (isLoading || !isSDKLoaded || !balancesLoaded) {
     return (
       <SafeAreaContainer insets={context?.client.safeAreaInsets} className="bg-black">
-        <div className="flex flex-col items-center space-y-6">
+        <div className="flex flex-col items-center">
           <img
-            src="/images/siyana.png"
+            src="/images/syyn.gif"
             alt="Siyana"
-            className="w-20 h-20 animate-pulse"
+            className="w-20 h-20"
           />
-          <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
         </div>
       </SafeAreaContainer>
     )

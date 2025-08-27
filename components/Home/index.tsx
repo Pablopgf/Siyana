@@ -9,9 +9,9 @@ import { WalletActions } from '@/components/Home/WalletActions'
 import { FlappyBird } from '@/components/FlappyBird'
 import { useMiniKit } from '@coinbase/onchainkit/minikit'
 import { FaRegClipboard, FaShoppingBag, FaRegBookmark, FaBookmark } from 'react-icons/fa'
-import { useAccount, useBalance } from 'wagmi'
 import { ProductDetailModal } from './ProductDetailModal';
 import { BalanceModal } from './BalanceModal';
+import { Header } from './Header';
 
 interface Product {
   name: string;
@@ -28,7 +28,7 @@ const products = [
   {
     name: 'SIYANA 1',
     price: '$9.99',
-    image: '/images/syyn001.jpeg',
+    image: '/images/SIYANA BASIC PILL TEE MOCKUP BLACK.png',
   },
   {
     name: 'SIYANA 2',
@@ -98,24 +98,17 @@ export default function HomeShop() {
     localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
 
-  const account = useAccount();
-  
-  const { data: nativeBalance } = useBalance({
-    address: account.address,
-    chainId: 8453,
-  });
 
-  const { data: balanceData, isLoading, error } = useBalance({
-    address: account.address,
-    token: '0xc7562d0536D3bF5A92865AC22062A2893e45Cb07' as `0x${string}`,
-    chainId: 8453,
-  });
 
 
 
   if (showFlappyBird) {
     return (
       <div className="w-full h-screen">
+        <Header 
+          onBalanceClick={() => setShowBalanceModal(true)} 
+          onLogoClick={() => setShowFlappyBird(false)}
+        />
         <FlappyBird />
         <button 
           onClick={() => setShowFlappyBird(false)}
@@ -130,6 +123,10 @@ export default function HomeShop() {
   if (showCart) {
     return (
       <div className="fixed inset-0 bg-white flex flex-col z-50 text-xs">
+        <Header 
+          onBalanceClick={() => setShowBalanceModal(true)} 
+          onLogoClick={() => setShowCart(false)}
+        />
         <div className="sticky top-0 left-0 w-full bg-white z-10 flex items-center px-4 pt-6 pb-4">
           <div className="flex items-center space-x-8 flex-1">
             <span
@@ -172,7 +169,7 @@ export default function HomeShop() {
             ) : (
               <>
                 {cart.map((item, i) => (
-                  <div key={i} className="flex w-full px-4 items-start pb-4">
+                  <div key={i} className="flex w-full pt-10 px-4 items-start pb-4">
                     <div className="w-40 h-64 flex-shrink-0 flex items-center justify-center bg-gray-100 overflow-hidden">
                       <img src={item.product.image} alt={item.product.name} className="object-contain w-full h-full" />
                     </div>
@@ -396,47 +393,18 @@ export default function HomeShop() {
         />
       )}
       <div className="min-h-screen bg-white pb-8 w-full">
-        {!showProductDetail && (
-          <div className="fixed top-0 left-0 w-full bg-black text-white px-1 py-1 grid grid-cols-3 items-center z-50">
-            <div className="flex items-center">
-              <img
-                src="/images/siyana.png"
-                alt="SYYN"
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-              <span 
-                className="text-white text-xs ml-2 cursor-pointer hover:text-gray-300 transition-colors"
-                onClick={() => setShowBalanceModal(true)}
-              >
-                {account.address ? (
-                  balanceData ? parseFloat(balanceData.formatted).toLocaleString() : '0'
-                ) : 'Connect Wallet'} SYYN
-                {isLoading && account.address && <span className="text-yellow-400">(Loading...)</span>}
-                {error && <span className="text-orange-400 text-[8px]">(Switch to Base)</span>}
-              </span>
-            </div>
-            <div className="flex justify-center">
-              <img
-                src="/images/siyana.png"
-                alt="Logo"
-                className="w-10 h-10 object-contain"
-              />
-            </div>
-            <div className="flex justify-end items-center">
-              {context?.user?.pfpUrl && (
-                <img
-                  src={context.user.pfpUrl}
-                  alt="User Profile"
-                  className="w-8 h-8 rounded-full border-2 border-white"
-                />
-              )}
-            </div>
-          </div>
-        )}
+        <Header 
+          onBalanceClick={() => setShowBalanceModal(true)} 
+          onLogoClick={() => {
+            setShowCart(false);
+            setShowFlappyBird(false);
+            setShowProductDetail(false);
+          }}
+        />
         
         {!(showCart && cart.length > 0) && (
           <>
-            <div className="w-full flex flex-col items-center pt-32 pb-20">
+            {/* <div className="w-full flex flex-col items-center pt-32 pb-20">
               <input
                 type="text"
                 placeholder="WHAT ARE YOU LOOKING FOR?"
@@ -444,8 +412,8 @@ export default function HomeShop() {
                 onChange={e => setSearch(e.target.value)}
                 className="w-full max-w-xs px-4 py-2 text-center text-black placeholder-black focus:placeholder-gray-400 mb-2 focus:outline-none text-xs"
               />
-            </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 px-4">
+            </div> */}
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-32 px-4">
               {products.filter(product =>
                 product.name.toLowerCase().includes(search.toLowerCase())
               ).map((product, idx) => (
@@ -516,12 +484,6 @@ export default function HomeShop() {
               className="flex items-center justify-center w-5 h-5"
             >
               <CartIcon count={cart.reduce((acc, item) => acc + item.quantity, 0)} />
-            </button>
-            <button 
-              onClick={() => setShowFlappyBird(true)}
-              className="flex items-center justify-center w-5 h-5"
-            >
-              🐦
             </button>
           </footer>
         )}
