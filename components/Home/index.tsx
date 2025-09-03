@@ -12,6 +12,8 @@ import { FaRegClipboard, FaShoppingBag, FaRegBookmark, FaBookmark } from 'react-
 import { ProductDetailModal } from './ProductDetailModal';
 import { BalanceModal } from './BalanceModal';
 import { Header } from './Header';
+import { useSendTransaction, useAccount } from 'wagmi'
+import { parseUnits, encodeFunctionData } from 'viem'
 
 interface Product {
   name: string;
@@ -26,8 +28,8 @@ interface CartItem {
 
 const products = [
   {
-    name: 'SIYANA 1',
-    price: '$9.99',
+    name: 'SIYANA BASIC PILL TEE MOCKUP BLACK',
+    price: '100000 SYYN',
     image: '/images/SIYANA BASIC PILL TEE MOCKUP BLACK.png',
   },
   {
@@ -35,16 +37,16 @@ const products = [
     price: '$19.99',
     image: '/images/icon.png',
   },
-  {
-    name: 'SIYANA 3',
-    price: '$29.99',
-    image: '/images/icon.png',
-  },
-  {
-    name: 'SIYANA 4',
-    price: '$39.99',
-    image: '/images/icon.png',
-  },
+  // {
+  //   name: 'SIYANA 3',
+  //   price: '$29.99',
+  //   image: '/images/icon.png',
+  // },
+  // {
+  //   name: 'SIYANA 4',
+  //   price: '$39.99',
+  //   image: '/images/icon.png',
+  // },
 ];
 
 const CartIcon = ({ count }: { count: number }) => (
@@ -65,9 +67,90 @@ export default function HomeShop() {
   const [activeCartTab, setActiveCartTab] = useState<'cart' | 'favorites'>('cart');
   const [showAddMessage, setShowAddMessage] = useState(false);
   const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [isProcessingTransaction, setIsProcessingTransaction] = useState(false);
   // const [showUser, setShowUser] = useState(false)
 
   const { setFrameReady, isFrameReady } = useMiniKit();
+  const { sendTransaction, isPending, data: transactionHash } = useSendTransaction();
+  const { address, isConnected } = useAccount();
+  
+  // Monitorear el estado de la transacción
+  useEffect(() => {
+    if (transactionHash && !isPending) {
+      // Transacción completada
+      console.log('Transaction completed:', transactionHash);
+      alert(`Transaction completed successfully!\nHash: ${transactionHash}\nView on BaseScan: https://basescan.org/tx/${transactionHash}`);
+    }
+  }, [transactionHash, isPending]);
+  
+  const handleBuyTransaction = async () => {
+    if (cart.length === 0) return;
+    
+    if (!isConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    
+    setIsProcessingTransaction(true);
+    
+    try {
+      // Calcular total en SYYN
+      const total = cart.reduce((acc, item) => {
+        if (item.product.price.includes('SYYN')) {
+          const unitPrice = parseFloat(item.product.price.replace(' SYYN', ''));
+          return acc + (unitPrice * item.quantity);
+        } else {
+          const unitPrice = parseFloat(item.product.price.replace('$', ''));
+          return acc + (unitPrice * item.quantity);
+        }
+      }, 0);
+      
+      // Dirección del contrato SYYN en Base
+      const syynContractAddress = '0xc7562d0536D3bF5A92865AC22062A2893e45Cb07';
+      
+      // Wallet de destino (puedes cambiar esta dirección)
+      const destinationWallet = '0xf7b746290436Fd276045A5Dc2b53b7a5D4261D39';
+      // const destinationWallet = '0xBbf814B2bcE970e6720EF8CB8c19bA7D902319ce';
+      
+      // ABI para transferir tokens ERC-20
+      const transferAbi = [
+        {
+          name: 'transfer',
+          type: 'function',
+          stateMutability: 'nonpayable',
+          inputs: [
+            { name: 'to', type: 'address' },
+            { name: 'amount', type: 'uint256' }
+          ],
+          outputs: [{ name: '', type: 'bool' }]
+        }
+      ];
+      
+      // Enviar transacción real
+      sendTransaction({
+        to: syynContractAddress,
+        data: encodeFunctionData({
+          abi: transferAbi,
+          functionName: 'transfer',
+          args: [destinationWallet, parseUnits(total.toString(), 18)]
+        }),
+        chainId: 8453, // Base network
+      });
+      
+      alert(`Transaction sent! Processing ${total.toLocaleString()} SYYN to ${destinationWallet}\nCheck your wallet for transaction status.`);
+      
+      // Limpiar carrito después de transacción enviada
+      setCart([]);
+      
+    } catch (error) {
+      console.error('Transaction failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Transaction failed: ${errorMessage}`);
+    } finally {
+      setIsProcessingTransaction(false);
+    }
+  };
+  
   useEffect(() => {
     if (!isFrameReady) {
       setFrameReady();
@@ -127,7 +210,7 @@ export default function HomeShop() {
           onBalanceClick={() => setShowBalanceModal(true)} 
           onLogoClick={() => setShowCart(false)}
         />
-        <div className="sticky top-0 left-0 w-full bg-white z-10 flex items-center px-4 pt-6 pb-4">
+        <div className="fixed top-0 left-0 w-full bg-white z-10 flex items-center px-4 pt-20 pb-4">
           <div className="flex items-center space-x-8 flex-1">
             <span
               className={`racking-wide cursor-pointer ${activeCartTab === 'cart' ? 'text-black' : 'text-black/50'}`}
@@ -169,18 +252,24 @@ export default function HomeShop() {
             ) : (
               <>
                 {cart.map((item, i) => (
-                  <div key={i} className="flex w-full pt-10 px-4 items-start pb-4">
+                  <div key={i} className="flex w-full pt-10 px-4 items-start pt-32 pb-4">
                     <div className="w-40 h-64 flex-shrink-0 flex items-center justify-center bg-gray-100 overflow-hidden">
                       <img src={item.product.image} alt={item.product.name} className="object-contain w-full h-full" />
                     </div>
                     <div className="flex-1 flex flex-col justify-between pl-6 h-full min-h-[224px] py-4">
                       <div>
-                        <div className="font-normal truncate mb-1">{item.product.name}</div>
+                        <div className="font-normal break-words leading-tight mb-1">{item.product.name}</div>
                         <div className="mb-4">
                           {(() => {
-                            const unitPrice = parseFloat(item.product.price.replace('$', ''));
-                            const totalPrice = unitPrice * item.quantity;
-                            return `$${totalPrice.toFixed(2)}`;
+                            if (item.product.price.includes('SYYN')) {
+                              const unitPrice = parseFloat(item.product.price.replace(' SYYN', ''));
+                              const totalPrice = unitPrice * item.quantity;
+                              return `${totalPrice.toLocaleString()} SYYN`;
+                            } else {
+                              const unitPrice = parseFloat(item.product.price.replace('$', ''));
+                              const totalPrice = unitPrice * item.quantity;
+                              return `$${totalPrice.toFixed(2)}`;
+                            }
                           })()}
                         </div>
                         <div className="flex items-center space-x-4 mb-2">
@@ -249,16 +338,35 @@ export default function HomeShop() {
                   </div>
                 ))}
                 <div className="fixed bottom-0 left-0 w-full bg-white px-4 py-4 flex items-center justify-between">
-                  <button className="bg-black text-white px-16 py-3">
-                    BUY
+                  <button 
+                    className={`px-16 py-3 ${isProcessingTransaction || isPending ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-800'} text-white transition-colors`}
+                    onClick={() => {
+                      if (!isProcessingTransaction && !isPending && cart.length > 0) {
+                        handleBuyTransaction();
+                      }
+                    }}
+                    disabled={isProcessingTransaction || isPending || cart.length === 0}
+                  >
+                    {isProcessingTransaction || isPending ? 'PROCESSING...' : 'BUY'}
                   </button>
                   <span className="text-black">
                     {(() => {
                       const total = cart.reduce((acc, item) => {
-                        const unitPrice = parseFloat(item.product.price.replace('$', ''));
-                        return acc + (unitPrice * item.quantity);
+                        if (item.product.price.includes('SYYN')) {
+                          // Para "100.000 SYYN", removemos solo " SYYN" y convertimos a número
+                          const unitPrice = parseFloat(item.product.price.replace(' SYYN', ''));
+                          return acc + (unitPrice * item.quantity);
+                        } else {
+                          const unitPrice = parseFloat(item.product.price.replace('$', ''));
+                          return acc + (unitPrice * item.quantity);
+                        }
                       }, 0);
-                      return `$${total.toFixed(2)}`;
+                      
+                      if (cart.some(item => item.product.price.includes('SYYN'))) {
+                        return `${total.toLocaleString()} SYYN`;
+                      } else {
+                        return `$${total.toFixed(2)}`;
+                      }
                     })()}
                   </span>
                 </div>
@@ -273,7 +381,7 @@ export default function HomeShop() {
             ) : (
               <>
                 {products.filter((_, idx) => favorites[idx]).length > 0 && (
-                  <div className="w-full flex mb-2 px-4">
+                  <div className="w-full flex mb-2 pt-20 px-4">
                     <span className="font-bold text-xs">
                       {(context?.user?.username || 'USER').toUpperCase() + "'S LIST"}
                     </span>
@@ -315,7 +423,7 @@ export default function HomeShop() {
                         </div>
                         <div className="w-full bg-white py-2 flex flex-col items-start text-xs">
                           <div className="flex items-center w-full justify-between">
-                            <span className="mb-1 truncate">{product.name}</span>
+                            <span className="mb-1 break-words leading-tight">{product.name}</span>
                             <button
                               className=""
                               onClick={() => {
@@ -392,7 +500,7 @@ export default function HomeShop() {
           onOpenCart={() => setShowCart(true)}
         />
       )}
-      <div className="min-h-screen bg-white pb-8 w-full">
+      <div className="min-h-screen bg-white w-full">
         <Header 
           onBalanceClick={() => setShowBalanceModal(true)} 
           onLogoClick={() => {
@@ -413,7 +521,7 @@ export default function HomeShop() {
                 className="w-full max-w-xs px-4 py-2 text-center text-black placeholder-black focus:placeholder-gray-400 mb-2 focus:outline-none text-xs"
               />
             </div> */}
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-32 px-4">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-20 px-4">
               {products.filter(product =>
                 product.name.toLowerCase().includes(search.toLowerCase())
               ).map((product, idx) => (
@@ -450,7 +558,7 @@ export default function HomeShop() {
                   </div>
                   <div className="w-full bg-white py-2 flex flex-col items-start text-xs">
                     <div className="flex items-center w-full justify-between">
-                      <span className="mb-1 truncate">{product.name}</span>
+                      <span className="mb-1 truncate max-w-[120px] overflow-hidden">{product.name}</span>
                       <button
                         className=""
                         onClick={() => {

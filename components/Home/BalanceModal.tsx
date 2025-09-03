@@ -146,14 +146,6 @@ export const BalanceModal: React.FC<BalanceModalProps> = ({ isOpen, onClose }) =
           </div>
         </div>
 
-        <div className="p-4 border-t border-gray-200">
-          <button
-            onClick={onClose}
-            className="w-full bg-black text-white py-3 font-medium hover:bg-gray-800 transition-colors"
-          >
-            Close
-          </button>
-        </div>
       </div>
     </div>
   );

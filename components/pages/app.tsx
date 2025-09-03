@@ -6,11 +6,13 @@ import { SafeAreaContainer } from '@/components/safe-area-container'
 import { useEffect, useState } from 'react'
 import { useMiniKit } from '@coinbase/onchainkit/minikit'
 import { useAccount, useBalance } from 'wagmi'
+import ImagePreloader from '@/components/ImagePreloader'
 
 export default function Home() {
   const { context, isLoading, isSDKLoaded } = useFrame()
   const { setFrameReady, isFrameReady } = useMiniKit()
   const [balancesLoaded, setBalancesLoaded] = useState(false)
+  const [imagesPreloaded, setImagesPreloaded] = useState(false)
   
   const account = useAccount();
   
@@ -43,16 +45,20 @@ export default function Home() {
     }
   }, [account.address, isLoadingNative, isLoadingSyyn, nativeBalance, syynBalance]);
 
-  if (isLoading || !isSDKLoaded || !balancesLoaded) {
+  if (isLoading || !isSDKLoaded || !balancesLoaded || !imagesPreloaded) {
     return (
       <SafeAreaContainer insets={context?.client.safeAreaInsets} className="bg-black">
-        <div className="flex flex-col items-center">
-          <img
-            src="/images/syyn.gif"
-            alt="Siyana"
-            className="w-20 h-20"
-          />
-        </div>
+        {!imagesPreloaded ? (
+          <ImagePreloader onImagesLoaded={() => setImagesPreloaded(true)} />
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <img
+              src="/images/syyn.gif"
+              alt="Siyana"
+              className="w-20 h-20 mb-4"
+            />
+          </div>
+        )}
       </SafeAreaContainer>
     )
   }
