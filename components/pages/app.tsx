@@ -51,11 +51,11 @@ export default function Home() {
         {!imagesPreloaded ? (
           <ImagePreloader onImagesLoaded={() => setImagesPreloaded(true)} />
         ) : (
-          <div className="flex flex-col items-center justify-center min-h-screen">
+          <div className="flex flex-col items-center justify-start min-h-screen pt-64">
             <img
-              src="/images/syyn.gif"
+              src="/images/SIYANA LOGO PANTALLA CARGA MINIAPP.png"
               alt="Siyana"
-              className="w-20 h-20 mb-4"
+              className="w-32 h-32 mb-4"
             />
           </div>
         )}

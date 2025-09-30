@@ -45,7 +45,7 @@ export default function ImagePreloader({ onImagesLoaded }: ImagePreloaderProps) 
                 failedCount++;
                 loadedCount++;
                 setLoadingProgress((loadedCount / imagesToLoad.length) * 100);
-                resolve(); // Continuar incluso si falla
+                resolve();
               };
               
               img.src = imageUrl;
@@ -58,21 +58,18 @@ export default function ImagePreloader({ onImagesLoaded }: ImagePreloaderProps) 
           }
         }
         
-        // Mostrar estadísticas finales
         if (failedCount > 0) {
           console.log(`Image preload completed: ${loadedCount - failedCount} loaded, ${failedCount} failed`);
         } else {
           console.log('All images loaded successfully');
         }
         
-        // Tiempo mínimo de visualización
         setTimeout(() => {
           onImagesLoaded();
         }, PRELOAD_CONFIG.MIN_DISPLAY_TIME);
         
       } catch (error) {
         console.error('Error in image preloader:', error);
-        // Si hay un error general, continuar de todas formas
         onImagesLoaded();
       }
     };
@@ -81,11 +78,11 @@ export default function ImagePreloader({ onImagesLoaded }: ImagePreloaderProps) 
   }, [onImagesLoaded]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-start min-h-screen pt-64">
       <img
-        src="/images/syyn.gif"
+        src="/images/SIYANA LOGO PANTALLA CARGA MINIAPP.png"
         alt="Siyana"
-        className="w-20 h-20"
+        className="w-32 h-32"
       />
     </div>
   );

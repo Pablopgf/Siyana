@@ -54,98 +54,99 @@ export const BalanceModal: React.FC<BalanceModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white w-full max-w-sm">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">Wallet Balance</h2>
+    <div className="fixed inset-0 bg-white z-50">
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between px-4 py-2">
+          <h2 className="text-black text-xs">WALLET</h2>
           <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-xl"
+            className="text-black text-xl"
           >
             ×
           </button>
         </div>
 
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-gray-600">Account</span>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-mono text-gray-800">
-                {account.address ? `${account.address.slice(0, 6)}...${account.address.slice(-4)}` : 'Not connected'}
-              </span>
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-sm text-gray-600">Network</span>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">B</span>
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-600">Account</span>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-mono text-gray-800">
+                  {account.address ? `${account.address.slice(0, 6)}...${account.address.slice(-4)}` : 'Not connected'}
+                </span>
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
               </div>
-              <span className="text-sm font-medium text-gray-800">Base</span>
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4">
-                              <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-600">Network</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">B</span>
+                </div>
+                <span className="text-xs font-medium text-gray-800">Base</span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
                     <img
                       src="/images/siyana.png"
                       alt="SYYN"
                       className="w-6 h-6 rounded-full"
                     />
-                    <span className="font-medium text-gray-800">Siyana <span className="text-gray-500">SYYN</span></span>
+                    <span className="text-xs font-medium text-gray-800">Siyana <span className="text-gray-500">SYYN</span></span>
                   </div>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-xs text-gray-600">
                     {isLoadingPrices ? 'Loading...' : syynPrice ? `$${syynPrice.toFixed(6)}` : 'Siyana Token'}
                   </span>
                 </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {syynBalance ? parseFloat(syynBalance.formatted).toLocaleString() : '0.00'}
+                <div className="text-2xl font-bold text-gray-900">
+                  {syynBalance ? parseFloat(syynBalance.formatted).toLocaleString() : '0.00'}
+                </div>
+                <div className="text-xs text-gray-600">
+                  {isLoadingPrices ? (
+                    'Loading price...'
+                  ) : syynPrice && syynBalance ? (
+                    `≈ $${(parseFloat(syynBalance.formatted) * syynPrice).toFixed(2)} USD`
+                  ) : (
+                    '≈ $0.00 USD'
+                  )}
+                </div>
               </div>
-              <div className="text-sm text-gray-600">
-                {isLoadingPrices ? (
-                  'Loading price...'
-                ) : syynPrice && syynBalance ? (
-                  `≈ $${(parseFloat(syynBalance.formatted) * syynPrice).toFixed(2)} USD`
-                ) : (
-                  '≈ $0.00 USD'
-                )}
-              </div>
-            </div>
 
-            <div className="bg-gray-50 p-4">
-                              <div className="flex items-center justify-between mb-2">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
                     <img
                       src="https://assets.coingecko.com/coins/images/279/small/ethereum.png"
                       alt="ETH"
                       className="w-6 h-6 rounded-full"
                     />
-                    <span className="font-medium text-gray-800">Ethereum <span className="text-gray-500">ETH</span></span>
+                    <span className="text-xs font-medium text-gray-800">Ethereum <span className="text-gray-500">ETH</span></span>
                   </div>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-xs text-gray-600">
                     {isLoadingPrices ? 'Loading...' : ethPrice ? `$${ethPrice.toFixed(2)}` : 'Ethereum'}
                   </span>
                 </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {nativeBalance ? parseFloat(nativeBalance.formatted).toFixed(8) : '0.00000000'}
-              </div>
-              <div className="text-sm text-gray-600">
-                {isLoadingPrices ? (
-                  'Loading price...'
-                ) : ethPrice && nativeBalance ? (
-                  `≈ $${(parseFloat(nativeBalance.formatted) * ethPrice).toFixed(2)} USD`
-                ) : (
-                  '≈ $0.00 USD'
-                )}
+                <div className="text-2xl font-bold text-gray-900">
+                  {nativeBalance ? parseFloat(nativeBalance.formatted).toFixed(8) : '0.00000000'}
+                </div>
+                <div className="text-xs text-gray-600">
+                  {isLoadingPrices ? (
+                    'Loading price...'
+                  ) : ethPrice && nativeBalance ? (
+                    `≈ $${(parseFloat(nativeBalance.formatted) * ethPrice).toFixed(2)} USD`
+                  ) : (
+                    '≈ $0.00 USD'
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

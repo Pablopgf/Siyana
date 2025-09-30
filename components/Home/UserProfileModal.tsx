@@ -14,6 +14,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
   const [email, setEmail] = useState('user@example.com')
   const [showAddresses, setShowAddresses] = useState(false)
   const [showNewAddress, setShowNewAddress] = useState(false)
+  const [showChangeEmail, setShowChangeEmail] = useState(false)
   const [addresses, setAddresses] = useState<Array<{
     name: string
     lastName: string
@@ -34,10 +35,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
     state: '',
     city: '',
     postCode: '',
-    prefix: '',
+    prefix: '+34',
     mobile: ''
   })
   const [errors, setErrors] = useState<{[key: string]: boolean}>({})
+  const [newEmail, setNewEmail] = useState('')
+  const [previousEmail, setPreviousEmail] = useState('')
+  const [emailError, setEmailError] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -84,7 +88,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
         localStorage.setItem('userAddresses', JSON.stringify(updatedAddresses))
         setEditingIndex(null)
       } else {
-        // Adding new address
         const newAddress = { ...formData }
         setAddresses(prev => [...prev, newAddress])
         localStorage.setItem('userAddresses', JSON.stringify([...addresses, newAddress]))
@@ -100,7 +103,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
         state: '',
         city: '',
         postCode: '',
-        prefix: '',
+        prefix: '+34',
         mobile: ''
       })
       setErrors({})
@@ -123,138 +126,150 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
     setShowNewAddress(true)
   }
 
+  const handleOpenChangeEmail = () => {
+    setPreviousEmail(email)
+    setNewEmail('')
+    setEmailError(false)
+    setShowChangeEmail(true)
+  }
+
+  const handleSaveNewEmail = () => {
+    if (newEmail) {
+      setEmail(newEmail)
+      localStorage.setItem('userEmail', newEmail)
+      setNewEmail('')
+      setEmailError(false)
+      setShowChangeEmail(false)
+    } else {
+      setEmailError(true)
+    }
+  }
+
   if (showNewAddress) {
     return (
       <div className="fixed inset-0 bg-white z-50">
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-xs font-bold text-gray-800">
-              {editingIndex !== null ? 'EDIT ADDRESS' : 'NEW ADDRESS'}
-            </h2>
+          <div className="p-4 pb-8">
             <button 
               onClick={() => setShowNewAddress(false)}
-              className="text-black hover:text-gray-700 text-xs"
+              className="text-black text-xl pb-8"
             >
-              <FaArrowLeft size={16} />
+              ×
             </button>
+            <h2 className="text-black text-xs">
+              {editingIndex !== null ? 'EDIT ADDRESS' : 'NEW ADDRESS'}
+            </h2>
           </div>
 
-          <div className="flex-1 p-6 overflow-y-auto">
-            <div className="space-y-4">
+          <div className="flex-1 px-4 overflow-y-auto">
+            <div className="space-y-6">
               <div>
-                <p className="text-xs text-gray-500 mb-1">NAME</p>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={`w-full p-2 border text-xs ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded`}
-                  placeholder="Enter name"
+                  className={`w-full pb-1 border-b text-xs text-black ${errors.name ? 'border-red-500' : 'border-gray-300'} bg-transparent outline-none`}
+                  placeholder="NAME"
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1">This field is mandatory.</p>}
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 mb-1">LAST NAME</p>
                 <input
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  className="w-full p-2 border text-xs border-gray-300 rounded"
-                  placeholder="Enter last name"
+                  className="w-full pb-1 border-b text-xs text-black border-gray-300 bg-transparent outline-none"
+                  placeholder="LAST NAME"
                 />
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 mb-1">ADDRESS</p>
                 <input
                   type="text"
                   value={formData.address}
                   onChange={(e) => handleInputChange('address', e.target.value)}
-                  className={`w-full p-2 border text-xs ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded`}
-                  placeholder="Enter address"
+                  className={`w-full pb-1 border-b text-xs text-black ${errors.address ? 'border-red-500' : 'border-gray-300'} bg-transparent outline-none`}
+                  placeholder="ADDRESS"
                 />
                 {errors.address && <p className="text-red-500 text-xs mt-1">This field is mandatory.</p>}
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 mb-1">FLAT NUMBER AND/OR LETTER</p>
                 <input
                   type="text"
                   value={formData.flatNumber}
                   onChange={(e) => handleInputChange('flatNumber', e.target.value)}
-                  className="w-full p-2 border text-xs border-gray-300 rounded"
-                  placeholder="Enter flat number/letter"
+                  className="w-full pb-1 border-b text-xs text-black border-gray-300 bg-transparent outline-none"
+                  placeholder="FLAT NUMBER AND/OR LETTER"
                 />
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 mb-1">STATE</p>
                 <input
                   type="text"
                   value={formData.state}
                   onChange={(e) => handleInputChange('state', e.target.value)}
-                  className={`w-full p-2 border text-xs ${errors.state ? 'border-red-500' : 'border-gray-300'} rounded`}
-                  placeholder="Enter state"
+                  className={`w-full pb-1 border-b text-xs text-black ${errors.state ? 'border-red-500' : 'border-gray-300'} bg-transparent outline-none`}
+                  placeholder="STATE"
                 />
                 {errors.state && <p className="text-red-500 text-xs mt-1">This field is mandatory.</p>}
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 mb-1">CITY</p>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
-                  className={`w-full p-2 border text-xs ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded`}
-                  placeholder="Enter city"
+                  className={`w-full pb-1 border-b text-xs text-black ${errors.city ? 'border-red-500' : 'border-gray-300'} bg-transparent outline-none`}
+                  placeholder="CITY"
                 />
                 {errors.city && <p className="text-red-500 text-xs mt-1">This field is mandatory.</p>}
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 mb-1">POST CODE</p>
                 <input
                   type="text"
                   value={formData.postCode}
                   onChange={(e) => handleInputChange('postCode', e.target.value)}
-                  className={`w-full p-2 border text-xs ${errors.postCode ? 'border-red-500' : 'border-gray-300'} rounded`}
-                  placeholder="Enter post code"
+                  className={`w-full pb-1 border-b text-xs text-black ${errors.postCode ? 'border-red-500' : 'border-gray-300'} bg-transparent outline-none`}
+                  placeholder="POST CODE"
                 />
                 {errors.postCode && <p className="text-red-500 text-xs mt-1">This field is mandatory.</p>}
               </div>
 
               <div className="flex space-x-2">
                 <div className="w-1/3">
-                  <p className="text-xs text-gray-500 mb-1">PREFIX</p>
+                  <p className="text-xs text-gray-500">PREFIX</p>
                   <input
                     type="text"
                     value={formData.prefix}
                     onChange={(e) => handleInputChange('prefix', e.target.value)}
-                    className="w-full p-2 border text-xs border-gray-300 rounded"
-                    placeholder="+1"
+                    className="w-full pb-1 border-b text-xs text-black border-gray-300 bg-transparent outline-none"
+                    placeholder="+34"
                   />
                 </div>
                 <div className="w-2/3">
-                  <p className="text-xs text-gray-500 mb-1">MOBILE</p>
+                  <p className="text-xs text-transparent">Texto invisible</p>
                   <input
                     type="text"
                     value={formData.mobile}
                     onChange={(e) => handleInputChange('mobile', e.target.value)}
-                    className="w-full p-2 border text-xs border-gray-300 rounded"
-                    placeholder="Enter mobile number"
+                    className="w-full pb-1 border-b text-xs text-black border-gray-300 bg-transparent outline-none"
+                    placeholder="MOBILE"
                   />
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className="p-6 border-t">
-            <button
-              onClick={handleNewAddressSave}
-              className="w-full bg-white text-black border border-black py-3 px-4 hover:bg-gray-100 transition-colors font-semibold text-xs"
-            >
-              SAVE
-            </button>
+              <div className="pt-8">
+                <button
+                  onClick={handleNewAddressSave}
+                  className="w-full bg-white border border-black py-3 px-4 hover:bg-gray-100 transition-colors text-xs text-black"
+                >
+                  SAVE
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -265,20 +280,20 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white w-full h-full max-w-none max-h-none overflow-y-auto">
-          <div className="p-4 border-gray-200">
+          <div className="p-4 pb-8">
             <button 
               onClick={() => setShowAddresses(false)}
-              className="text-black hover:text-gray-700 text-xs mb-4"
+              className="text-black text-xl pb-8"
             >
-              <FaArrowLeft size={16} />
+              ×
             </button>
-            <div className="border-b border-gray-200 pb-2">
-              <h2 className="text-xs font-bold text-gray-800">ADDRESSES</h2>
+            <div>
+              <h2 className="text-black text-xs">ADDRESSES</h2>
             </div>
           </div>
 
-          <div className="p-6">
-            {addresses.length > 0 ? (
+          <div className="px-4">
+            {addresses.length > 0 && (
               <div className="space-y-3 mb-4">
                 {addresses.map((address, index) => (
                   <div 
@@ -308,10 +323,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-xs text-gray-500 text-center py-4 mb-4">
-                No addresses saved yet
-              </p>
             )}
             
             <button
@@ -325,13 +336,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
                   state: '',
                   city: '',
                   postCode: '',
-                  prefix: '',
+                  prefix: '+34',
                   mobile: ''
                 })
                 setErrors({})
                 setShowNewAddress(true)
               }}
-              className="w-full bg-white text-black border border-black py-3 px-4 hover:bg-gray-100 transition-colors font-semibold text-xs"
+              className="w-1/2 bg-white border border-black py-3 px-4 hover:bg-gray-100 text-black text-xs"
             >
               ADD NEW ADDRESS
             </button>
@@ -341,14 +352,67 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
     )
   }
 
+  if (showChangeEmail) {
+    return (
+      <div className="fixed inset-0 bg-white z-50">
+        <div className="flex flex-col h-full">
+          <div className="p-4 pb-8">
+            <button 
+              onClick={() => setShowChangeEmail(false)}
+              className="text-black text-xl pb-8"
+            >
+              ×
+            </button>
+            <h2 className="text-black text-xs">CHANGE EMAIL</h2>
+            <p className="text-black text-xs mt-2">Your current login email is: {email}</p>
+          </div>
+
+          <div className="flex-1 px-4 overflow-y-auto">
+            <div className="space-y-4">
+              <div>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => {
+                    setNewEmail(e.target.value)
+                    if (emailError) setEmailError(false)
+                  }}
+                  className={`w-full pb-1 border-b text-black text-xs ${emailError ? 'border-red-500' : 'border-gray-300'} bg-transparent outline-none`}
+                  placeholder="NEW EMAIL"
+                />
+                {emailError && (
+                  <div className="flex items-center mt-1">
+                    <div className="w-4 h-4 rounded-full bg-white border border-red-500 flex items-center justify-center mr-1">
+                      <span className="text-red-500 text-xs font-bold">!</span>
+                    </div>
+                    <p className="text-red-500 text-xs">This field is mandatory</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4">
+                <button
+                  onClick={handleSaveNewEmail}
+                  className="w-1/2 bg-white border border-black py-3 px-4 hover:bg-gray-100 transition-colors text-black text-xs"
+                >
+                  CHANGE EMAIL
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white w-full h-full max-w-none max-h-none overflow-y-auto">
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-          <h2 className="text-xs font-bold text-gray-800">Profile</h2>
+        <div className="flex items-center justify-between px-4 py-2">
+          <h2 className="text-black text-xs">PROFILE</h2>
           <button 
             onClick={onClose}
-            className="text-xl"
+            className="text-black text-xl"
           >
             ×
           </button>
@@ -366,7 +430,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
                   />
                 )}
                 <h3 className="text-xs font-bold text-gray-800 mb-2">
-                  {user.displayName || 'Usuario Farcaster'}
+                  {user.displayName}
                 </h3>
                 <p className="text-xs text-gray-600">
                   @{user.username}
@@ -374,45 +438,36 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  <FaEnvelope className="text-blue-500" size={16} />
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-500">Email</p>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="text-xs font-semibold text-gray-800 bg-transparent border-none outline-none w-full"
-                      placeholder="Enter email"
-                    />
-                  </div>
-                </div>
-
                 <div 
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                  className="flex items-center justify-between pt-4 cursor-pointer hover:bg-gray-100 transition-colors"
                   onClick={() => setShowAddresses(true)}
                 >
                   <div className="flex items-center space-x-3">
-                    <FaMapMarkerAlt className="text-green-500" size={16} />
                     <div>
-                      <p className="text-xs text-gray-500">ADDRESSES</p>
+                      <p className="text-black text-xs">ADDRESSES</p>
                     </div>
                   </div>
-                  <FaChevronRight className="text-gray-400" size={14} />
+                  <FaChevronRight size={12} />
+                </div>
+
+                <div 
+                  className="flex items-center justify-between pt-4 cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={handleOpenChangeEmail}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div>
+                      <p className="text-black text-xs">EMAIL</p>
+                      <p className="text-gray-600 text-xs mt-1">{email}</p>
+                    </div>
+                  </div>
+                  <FaChevronRight size={12} />
                 </div>
               </div>
 
-              <button
-                onClick={handleSave}
-                className="w-full bg-black text-white py-3 px-4 hover:bg-gray-800 transition-colors font-semibold text-xs"
-              >
-                SAVE
-              </button>
             </div>
           ) : (
             <div className="text-center py-8">
               <FaUser className="text-gray-400 mx-auto mb-4" size={48} />
-              <p className="text-xs text-gray-500">No hay información de usuario disponible</p>
             </div>
           )}
         </div>

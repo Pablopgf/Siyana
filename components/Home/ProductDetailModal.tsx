@@ -8,11 +8,15 @@ interface Product {
   image: string;
   images?: string[];
   description?: string;
+  embedUrl?: string;
+  embedTitle?: string;
+  sizes?: string[]; // Agregar tallas
 }
 
 interface CartItem {
   product: Product;
   quantity: number;
+  selectedSize?: string; // Agregar talla seleccionada
 }
 
 interface Props {
@@ -29,72 +33,96 @@ interface Props {
 export const ProductDetailModal: React.FC<Props> = ({ product, onClose, favorites, setFavorites, products, cart, setCart, onOpenCart }) => {
   const images = product.images || [product.image];
   const [mainImage, setMainImage] = useState(images[0]);
+  const [selectedSize, setSelectedSize] = useState<string>(''); // Estado para talla seleccionada
 
   const productIndex = products.findIndex(p => p.name === product.name);
 
+  const availableSizes = product.sizes || ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  const handleAddToCart = () => {
+    const existingItemIndex = cart.findIndex(
+      item => item.product.name === product.name && item.selectedSize === selectedSize
+    );
+
+    if (existingItemIndex > -1) {
+      const newCart = [...cart];
+      newCart[existingItemIndex].quantity += 1;
+      setCart(newCart);
+    } else {
+      setCart([...cart, { product, quantity: 1, selectedSize: selectedSize || undefined }]);
+    }
+  };
+
   return (
     <>
-      <div className="fixed top-10 left-0 w-full bg-white p-4 pt-8 flex items-center justify-between z-50">
-        <button onClick={onClose} className="text-xl">×</button>
+      <div className="fixed top-0 left-0 w-full bg-white p-4 pt-16 flex items-center justify-between z-50 border-b border-gray-200">
+        <button onClick={onClose} className="text-black text-xl">×</button>
         <button 
           onClick={() => {
             onClose();
             onOpenCart();
           }}
-          className="flex items-center justify-center w-6 h-6"
+          className="flex items-center space-x-2"
         >
           <FaShoppingBag className="text-black w-5 h-5" />
+          <span className="text-black text-xl">
+            [{cart.reduce((acc, item) => acc + item.quantity, 0)}]
+          </span>
         </button>
       </div>
-      <div className="fixed inset-0 z-40 flex flex-col overflow-y-auto pt-16">
-        <div className="flex flex-col items-center bg-white pb-2 px-4">
+      <div className="fixed inset-0 z-40 flex flex-col overflow-y-auto pt-20">
+        <div className="flex-1 flex flex-col">
           <div
             className="w-full flex items-center justify-center bg-gray-100 relative"
-            style={{ minHeight: '592px' }}
+            style={{ minHeight: '600px' }}
           >
             <img
               src={mainImage}
               alt={product.name}
-              className="w-full h-112 object-contain"
+              className="object-contain w-full h-full"
             />
           </div>
-        </div>
-        <div className="flex flex-col items-center bg-white px-4 pb-10 mb-20">
-          {product.description && <p className="mb-4 text-gray-700 text-center text-xs">{product.description}</p>}
-        </div>
-        <div className="fixed bottom-0 left-0 w-full bg-white p-4 flex flex-col items-center">
-          <div className="flex flex-col w-full">
-            <div className="flex items-center justify-between">
+          
+          <div className="p-4 bg-white border-b border-gray-200">
+            <select
+              value={selectedSize}
+              onChange={(e) => setSelectedSize(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm bg-white text-black focus:border-black focus:outline-none"
+            >
+              <option value="">SELECT A SIZE</option>
+              {availableSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+            {selectedSize && (
+              <p className="text-xs text-gray-600 mt-2">
+                Selected size: <span className="font-medium">{selectedSize}</span>
+              </p>
+            )}
+          </div>
+          
+          <div className="fixed bottom-0 left-0 w-full bg-white p-4 border-t border-gray-200">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-black">{product.name}</span>
               <button
-                className=""
                 onClick={() => {
-                  const updated = [...favorites];
-                  updated[productIndex] = !updated[productIndex];
-                  setFavorites(updated);
+                  const newFavorites = [...favorites];
+                  newFavorites[productIndex] = !newFavorites[productIndex];
+                  setFavorites(newFavorites);
                 }}
-                aria-label="Favorite"
+                className="text-black"
               >
-                {favorites[productIndex] ? (
-                  <FaBookmark className="text-black" />
-                ) : (
-                  <FaRegBookmark className="text-black/30" />
-                )}
+                {favorites[productIndex] ? <FaBookmark /> : <FaRegBookmark />}
               </button>
             </div>
+            
             <span className="text-xs text-black mb-4">{product.price}</span>
+            
             <button 
               className="w-full bg-white text-black border border-black py-2 text-xs"
-              onClick={() => {
-                const updatedCart = [...cart];
-                const idx = updatedCart.findIndex((item: CartItem) => item.product.name === product.name);
-                if (idx !== -1) {
-                  updatedCart[idx] = { ...updatedCart[idx], quantity: updatedCart[idx].quantity + 1 };
-                } else {
-                  updatedCart.push({ product, quantity: 1 });
-                }
-                setCart(updatedCart);
-              }}
+              onClick={handleAddToCart}
             >
               ADD
             </button>
